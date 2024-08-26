@@ -1,1 +1,2 @@
 -std=c++23
+-DCPP_CHESS_DEBUG

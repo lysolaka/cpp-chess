@@ -1,4 +1,5 @@
 #include "piece.hpp"
+#include <vector>
 
 #ifndef BOARD_HPP
 #define BOARD_HPP
@@ -18,6 +19,8 @@ public:
 private:
   /* Array of size 64 storing each piece like a chess board does */
   Piece *field;
+  /* Stores the side which can now move its pieces */
+  Piece::Side current_move;
 
   /* Returns a reference to a piece at `row` and `col`
    * for private use inside the class */
@@ -26,11 +29,20 @@ private:
    * for private use inside the class */
   inline const Piece &field_at(char col, int row) const;
 
+  /* Checks if `pos` is inside the board */
+  static bool is_inside(FieldPos const &pos);
+  /* Checks if `pos` is occupied by a piece */
+  inline bool is_occupied(FieldPos const &pos) const;
+#ifdef CPP_CHESS_DEBUG
+public:
+#endif
+  /* Returns a vector of possible positions a piece can move to,
+   * empty - if `pos` points to an empty field */
+  std::vector<FieldPos> possible_moves(FieldPos const &pos) const;
 
 public:
   /* Constructs the board and places the pieces in appropriate places */
   Board();
-
   ~Board();
 
   /* Returns reference to a piece at `row` and `col` */
@@ -39,18 +51,13 @@ public:
   const Piece &operator[](char col, int row) const;
 
   /* Returns reference to a piece at `pos` */
-  Piece &operator[](FieldPos pos);
+  Piece &operator[](FieldPos const &pos);
   /* Returns const reference to a piece at `pos` */
-  const Piece &operator[](FieldPos pos) const;
+  const Piece &operator[](FieldPos const &pos) const;
 
-  /* Moves a piece from `start_pos` to `end_pos`, this method might throw:
-   * std::invalid_argument - if the piece can't perform this movement under any
-   * circumstance, std::out_of_range - if the `start_pos` or `end_pos` is
-   * outside the board. Returns true if movement was successful, false if the
-   * piece can't be moved due to the rules. */
-  bool move_piece(FieldPos start_pos, FieldPos end_pos);
-
+#ifdef CPP_CHESS_DEBUG
   void debug_print() const;
+#endif
 };
 
 #endif
