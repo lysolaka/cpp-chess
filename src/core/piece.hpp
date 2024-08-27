@@ -3,6 +3,7 @@
 
 class Piece {
 public:
+#ifdef CPP_CHESS_DEBUG
   enum Type : char {
     KING = 'K',
     QUEEN = 'Q',
@@ -12,6 +13,17 @@ public:
     PAWN = 'p',
     EMPTY = ' ' // Field is empty
   };
+#else
+  enum Type : int {
+    KING = 0,
+    QUEEN,
+    ROOK,
+    BISHOP,
+    KNIGHT,
+    PAWN,
+    EMPTY // Field is empty
+  };
+#endif
   enum Side { BLACK, WHITE, NONE };
 
 private:
@@ -37,7 +49,6 @@ public:
   bool has_moved() const;
   /* Marks the piece as moved */
   void mark_moved();
-
 };
 
 #endif

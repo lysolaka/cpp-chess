@@ -242,15 +242,6 @@ const Piece &Board::operator[](char col, int row) const {
   return field_at(col, row);
 }
 
-/* Returns reference to a piece at `pos` */
-Piece &Board::operator[](FieldPos const &pos) {
-  return field_at(pos.col, pos.row);
-}
-/* Returns const reference to a piece at `pos` */
-const Piece &Board::operator[](FieldPos const &pos) const {
-  return field_at(pos.col, pos.row);
-}
-
 /* Moves a piece from position `start` to position `end`,
  * may throw std::invalid_argument if `end` is not a viable position for the
  * selected piece */

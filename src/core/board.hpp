@@ -49,11 +49,6 @@ public:
   /* Returns const reference to a piece at `row` and `col` */
   const Piece &operator[](char col, int row) const;
 
-  /* Returns reference to a piece at `pos` */
-  Piece &operator[](FieldPos const &pos);
-  /* Returns const reference to a piece at `pos` */
-  const Piece &operator[](FieldPos const &pos) const;
-
   /* Moves a piece from position `start` to position `end`,
    * may throw std::invalid_argument if `end` is not a viable position for the
    * selected piece or if piece at `start` is not from the current move */
