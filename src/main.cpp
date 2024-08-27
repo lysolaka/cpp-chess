@@ -1,21 +1,26 @@
 #include "core/board.hpp"
-#include "core/piece.hpp"
 #include <iostream>
+#include <stdexcept>
 
 int main() {
   Board b;
   b.debug_print();
-  auto v = b.possible_moves(Board::FieldPos('a', 2));
-  for (auto i : v) {
-    std::cout << i.col << i.row << '\n';
+  try {
+  b.move_piece(Board::FieldPos('d', 2), Board::FieldPos('d', 4));
+  } catch(std::invalid_argument a) {
+    std::cout << '1' << '\n';
   }
-
-  b['c', 4] = Piece(Piece::QUEEN, Piece::WHITE);
-  b['d', 1] = Piece();
+  try {
+  b.move_piece(Board::FieldPos('d', 7), Board::FieldPos('d', 5));
+  } catch(std::invalid_argument a) {
+    std::cout << '2' << '\n';
+  }
+  try {
+  b.move_piece(Board::FieldPos('c', 1), Board::FieldPos('f', 4));
+  } catch(std::invalid_argument a) {
+    std::cout << '3' << '\n';
+  }
   b.debug_print();
-  v = b.possible_moves(Board::FieldPos('c', 4));
-  for (auto i : v) {
-    std::cout << i.col << i.row << '\n';
-  }
+
   return 0;
 }

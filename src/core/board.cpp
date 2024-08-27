@@ -1,11 +1,16 @@
 #include "board.hpp"
 #include "piece.hpp"
 #include <initializer_list>
+#include <stdexcept>
 
 /* Type to pass a position as a single argument
  * col - any char from 'a' to 'h' (inclusive)
  * row - any int from 1 to 8 (inclusive) */
 Board::FieldPos::FieldPos(char c, int r) : col(c), row(r) {}
+
+bool operator==(Board::FieldPos const &l, Board::FieldPos const &r) {
+  return (l.row == r.row && l.col == r.col);
+}
 
 /* Returns a reference to a piece at `row` and `col`
  * for private use inside the class */
@@ -27,7 +32,7 @@ bool Board::is_inside(FieldPos const &pos) {
 }
 
 /* Checks if `pos` is occupied by a piece */
-inline bool Board::is_occupied(Board::FieldPos const &pos) const {
+inline bool Board::is_occupied(FieldPos const &pos) const {
   if (field_at(pos.col, pos.row).get_type() != Piece::EMPTY)
     return true;
   else
@@ -36,8 +41,7 @@ inline bool Board::is_occupied(Board::FieldPos const &pos) const {
 
 /* Returns a vector of possible positions a piece can move to,
  * empty - if `pos` points to an empty field */
-std::vector<Board::FieldPos>
-Board::possible_moves(Board::FieldPos const &pos) const {
+std::vector<Board::FieldPos> Board::possible_moves(FieldPos const &pos) const {
   std::vector<FieldPos> moves;
   moves.clear();
   Piece selected = field_at(pos.col, pos.row);
@@ -180,35 +184,24 @@ Board::possible_moves(Board::FieldPos const &pos) const {
       }
     }
     break;
-  case Piece::PAWN:
-    cur = FieldPos(pos.col, pos.row + 1);
-    if (!is_inside(cur))
-      break;
+  case Piece::PAWN: {
+    int pl_min_one = selected.get_side() == Piece::WHITE ? 1 : -1;
+    cur.row += pl_min_one;
     if (!is_occupied(cur))
       moves.push_back(cur);
 
-    cur.row++;
-    if (!selected.has_moved()) {
-      if (!is_occupied(cur))
-        moves.push_back(cur);
+    cur.row += pl_min_one;
+    if (!is_occupied(cur) && !selected.has_moved())
+      moves.push_back(cur);
+
+    cur = pos;
+    cur.row += pl_min_one;
+    for (int i : {-1, 1}) {
+      if (is_occupied(FieldPos(cur.col + i, cur.row)) &&
+          field_at(cur.col + i, cur.row).get_side() != current_move)
+        moves.push_back(FieldPos(cur.col + i, cur.row));
     }
-    cur.row--;
-    {
-      int temp = cur.col;
-      cur.col -= 1;
-      if (is_inside(cur)) {
-        if (field_at(cur.col, cur.row).get_side() != current_move &&
-            field_at(cur.col, cur.row).get_type() != Piece::EMPTY)
-          moves.push_back(cur);
-      }
-      cur.col = temp + 1;
-      if (is_inside(cur)) {
-        if (field_at(cur.col - 1, cur.row).get_side() != current_move &&
-            field_at(cur.col, cur.row).get_type() != Piece::EMPTY)
-          moves.push_back(cur);
-      }
-    }
-    break;
+  } break;
   case Piece::EMPTY:
     break;
   }
@@ -256,6 +249,34 @@ Piece &Board::operator[](FieldPos const &pos) {
 /* Returns const reference to a piece at `pos` */
 const Piece &Board::operator[](FieldPos const &pos) const {
   return field_at(pos.col, pos.row);
+}
+
+/* Moves a piece from position `start` to position `end`,
+ * may throw std::invalid_argument if `end` is not a viable position for the
+ * selected piece */
+void Board::move_piece(FieldPos const &start, FieldPos const &end) {
+  if (field_at(start.col, start.row).get_side() != current_move)
+    throw std::invalid_argument("Invalid piece selected!");
+
+  auto moves = possible_moves(start);
+  bool found = false;
+  for (FieldPos const &i : moves) {
+    if (end == i)
+      found = true;
+    if (found)
+      break;
+  }
+  if (!found)
+    throw std::invalid_argument("Invalid position supplied!");
+
+  field_at(start.col, start.row).mark_moved();
+  field_at(end.col, end.row) = field_at(start.col, start.row);
+  field_at(start.col, start.row) = Piece();
+
+  if (current_move == Piece::WHITE)
+    current_move = Piece::BLACK;
+  else
+    current_move = Piece::WHITE;
 }
 
 #ifdef CPP_CHESS_DEBUG
