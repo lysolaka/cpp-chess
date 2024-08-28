@@ -31,6 +31,7 @@ target_compile_definitions(cpp-chess-core PRIVATE
 
 add_library(cpp-chess-ui STATIC
   src/ui/display.cpp
+  src/ui/control.cpp
 )
 target_include_directories(cpp-chess-ui PUBLIC src/ui/)
 target_compile_features(cpp-chess-ui PUBLIC cxx_std_23)

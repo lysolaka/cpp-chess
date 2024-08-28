@@ -54,6 +54,9 @@ public:
    * selected piece or if piece at `start` is not from the current move */
   void move_piece(FieldPos const &start, FieldPos const &end);
 
+  /* Returns the side which should perform next move */
+  Piece::Side get_move() const;
+
 #ifdef CPP_CHESS_DEBUG
   void debug_print() const;
 #endif

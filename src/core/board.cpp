@@ -270,6 +270,9 @@ void Board::move_piece(FieldPos const &start, FieldPos const &end) {
     current_move = Piece::WHITE;
 }
 
+/* Returns the side which should perform next move */
+Piece::Side Board::get_move() const { return current_move; }
+
 #ifdef CPP_CHESS_DEBUG
 #include <iostream>
 void Board::debug_print() const {
