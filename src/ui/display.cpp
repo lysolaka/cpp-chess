@@ -26,6 +26,11 @@ void Display::print_piece(Piece const &target) {
     symbol += 5;
     break;
   }
+
+  if (target.get_type() == Piece::EMPTY) {
+    std::wprintf(L" ");
+    return;
+  }
 #else
   if (target.get_type() == Piece::EMPTY) {
     std::wprintf(L" ");
