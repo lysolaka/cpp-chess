@@ -18,7 +18,7 @@ CHECK_INCLUDE_FILE_CXX(initializer_list HAVE_INIT_LIST)
 CHECK_INCLUDE_FILE_CXX(stdexcept HAVE_EXCEPT)
 CHECK_INCLUDE_FILE_CXX(clocale HAVE_LOCALE)
 
-find_program(USE_COLOR bash)
+option(USE_COLOR "Enable colour output" ON)
 
 add_library(cpp-chess-core STATIC
   src/core/piece.cpp
