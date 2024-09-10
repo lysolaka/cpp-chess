@@ -1,6 +1,8 @@
 # CPP-CHESS
 A very crude chess game to show how C++ works
 
+See also a version of this in Rust: [lysolaka/rust-chess](https://github.com/lysolaka/rust-chess)
+
 ## Building
 
 ```$
